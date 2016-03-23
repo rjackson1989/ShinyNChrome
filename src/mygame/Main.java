@@ -15,6 +15,11 @@ import com.jme3.scene.shape.Box;
  */
 public class Main extends SimpleApplication {
 
+    final int MENU = 0;
+    final int GAME_ON = 1;
+    final int PAUSE = 2;
+    final int GAME_OVER = 3;
+    
     public static void main(String[] args) {
         Main app = new Main();
         app.start();

@@ -15,11 +15,9 @@ import com.jme3.input.controls.AnalogListener;
 public class MenuScreen extends AbstractAppState implements ActionListener, AnalogListener{
 
     public void onAction(String name, boolean isPressed, float tpf) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public void onAnalog(String name, float value, float tpf) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
