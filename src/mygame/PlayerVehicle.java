@@ -17,20 +17,21 @@ public class PlayerVehicle
 {
     Node vehicleNode;
     Geometry vehicleGeom;
-    int currentState;
+    int currentState, ID;
     final int SELECTION = 0;
     final int ALIVE = 1;
     final int DEATH = 2;
     Main main;
     
-    public PlayerVehicle(Main m)
+    public PlayerVehicle(Main m, int ID)
     {
         this.main = m;
         currentState = SELECTION;
         vehicleNode = new Node();
-        
+        this.ID = ID;
     }
     public void onAction(String name, boolean isPressed, float tpf) {
+        
     }
 
     public void onAnalog(String name, float value, float tpf) {
