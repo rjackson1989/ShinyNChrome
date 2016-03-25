@@ -14,6 +14,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 
 
 /**
@@ -30,6 +31,9 @@ public class Main extends SimpleApplication implements AnalogListener{
     
     public static void main(String[] args) {
         Main app = new Main();
+        AppSettings settings = new AppSettings(true);
+        settings.setUseJoysticks(true);
+        app.setSettings(settings);
         app.setShowSettings(false);
         app.start();
     }
@@ -51,48 +55,48 @@ public class Main extends SimpleApplication implements AnalogListener{
     private void initControls()
     {
         
-        Joystick[] joysticks = joyInput.loadJoysticks(inputManager);
+        Joystick[] joysticks = inputManager.getJoysticks();
         if(joysticks == null)
         {
             throw new IllegalStateException("Cannot find Joystick!");
         }
         int i = 0;
         
-        joysticks[i].getAxis(JoystickAxis.X_AXIS).assignAxis("Right", "Left");
-        joysticks[i].getAxis(JoystickAxis.Y_AXIS).assignAxis("Down", "Up");
+//        joysticks[i].getAxis(JoystickAxis.X_AXIS).assignAxis("Right", "Left");
+//        joysticks[i].getAxis(JoystickAxis.Y_AXIS).assignAxis("Down", "Up");
        // for(int i = 0; i < 2; i++)
         //{
-//inputManager.addMapping("LS Up", new JoyAxisTrigger(i, 0, true));
-//inputManager.addMapping("LS Down", new JoyAxisTrigger(i, 0, false));
-//inputManager.addMapping("LS Left", new JoyAxisTrigger(i, 1, false));
-//inputManager.addMapping("LS Right", new JoyAxisTrigger(i, 1, true));
-//inputManager.addListener(this, "LS Left", "LS Right", "LS Down", "LS Up");
-//inputManager.addMapping("RS Up", new JoyAxisTrigger(i, 2, true));
-//inputManager.addMapping("RS Down", new JoyAxisTrigger(i, 2, false));
-//inputManager.addMapping("RS Left", new JoyAxisTrigger(i, 3, false));
-//inputManager.addMapping("RS Right", new JoyAxisTrigger(i, 3, true));
-//inputManager.addListener(this, "RS Left", "RS Right", "RS Down", "RS Up");
-//inputManager.addMapping("DPAD Left", new JoyAxisTrigger(i, JoyInput.AXIS_POV_X, true));
-//inputManager.addMapping("DPAD Right", new JoyAxisTrigger(i, JoyInput.AXIS_POV_X, false));
-//inputManager.addMapping("DPAD Down", new JoyAxisTrigger(i, JoyInput.AXIS_POV_Y, true));
-//inputManager.addMapping("DPAD Up", new JoyAxisTrigger(i, JoyInput.AXIS_POV_Y, false));
-//inputManager.addListener(this, "DPAD Left", "DPAD Right", "DPAD Down", "DPAD Up");
-//inputManager.addMapping("Trigger L", new JoyAxisTrigger(i, 4, false));
-//inputManager.addMapping("Trigger R", new JoyAxisTrigger(i, 4, true));
-//inputManager.addListener(this, "Trigger L", "Trigger R");
-//joysticks[i].assignButton("Button A", 0);
-//joysticks[i].assignButton("Button B", 1);
-//joysticks[i].assignButton("Button X", 2);
-//joysticks[i].assignButton("Button Y", 3);
-//inputManager.addListener(this, "Button A", "Button B", "Button X", "Button Y");
-//joysticks[i].assignButton("Button LB", 4);
-//joysticks[i].assignButton("Button RB", 5);
-//joysticks[i].assignButton("Button Back", 6);
-//joysticks[i].assignButton("Button Start", 7);
-//inputManager.addListener(this, "Button LB", "Button RB", "Button Back", "Button Start");
-//joysticks[i].assignButton("Button LS", 8 );
-//joysticks[i].assignButton("Button RS", 9);
-//inputManager.addListener(this, "Button LS", "Button RS");
+inputManager.addMapping("LS Up", new JoyAxisTrigger(i, 0, true));
+inputManager.addMapping("LS Down", new JoyAxisTrigger(i, 0, false));
+inputManager.addMapping("LS Left", new JoyAxisTrigger(i, 1, false));
+inputManager.addMapping("LS Right", new JoyAxisTrigger(i, 1, true));
+inputManager.addListener(this, "LS Left", "LS Right", "LS Down", "LS Up");
+inputManager.addMapping("RS Up", new JoyAxisTrigger(i, 2, true));
+inputManager.addMapping("RS Down", new JoyAxisTrigger(i, 2, false));
+inputManager.addMapping("RS Left", new JoyAxisTrigger(i, 3, false));
+inputManager.addMapping("RS Right", new JoyAxisTrigger(i, 3, true));
+inputManager.addListener(this, "RS Left", "RS Right", "RS Down", "RS Up");
+inputManager.addMapping("DPAD Left", new JoyAxisTrigger(i, JoyInput.AXIS_POV_X, true));
+inputManager.addMapping("DPAD Right", new JoyAxisTrigger(i, JoyInput.AXIS_POV_X, false));
+inputManager.addMapping("DPAD Down", new JoyAxisTrigger(i, JoyInput.AXIS_POV_Y, true));
+inputManager.addMapping("DPAD Up", new JoyAxisTrigger(i, JoyInput.AXIS_POV_Y, false));
+inputManager.addListener(this, "DPAD Left", "DPAD Right", "DPAD Down", "DPAD Up");
+inputManager.addMapping("Trigger L", new JoyAxisTrigger(i, 4, false));
+inputManager.addMapping("Trigger R", new JoyAxisTrigger(i, 4, true));
+inputManager.addListener(this, "Trigger L", "Trigger R");
+joysticks[i].assignButton("Button A", 0);
+joysticks[i].assignButton("Button B", 1);
+joysticks[i].assignButton("Button X", 2);
+joysticks[i].assignButton("Button Y", 3);
+inputManager.addListener(this, "Button A", "Button B", "Button X", "Button Y");
+joysticks[i].assignButton("Button LB", 4);
+joysticks[i].assignButton("Button RB", 5);
+joysticks[i].assignButton("Button Back", 6);
+joysticks[i].assignButton("Button Start", 7);
+inputManager.addListener(this, "Button LB", "Button RB", "Button Back", "Button Start");
+joysticks[i].assignButton("Button LS", 8 );
+joysticks[i].assignButton("Button RS", 9);
+inputManager.addListener(this, "Button LS", "Button RS");
        // }
 
     }
