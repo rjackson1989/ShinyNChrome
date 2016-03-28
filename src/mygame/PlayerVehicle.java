@@ -53,10 +53,10 @@ public class PlayerVehicle
         Material mat = new Material(m.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Gray);
         bulletGeom.setMaterial(mat);
-        bulletGeom.setLocalTranslation(0, 0, 5f);
+        bulletGeom.setLocalTranslation(0, 1f, 5f);
        // vehicleNode.attachChild(bulletGeom);
         m.getRootNode().attachChild(vehicleNode);
-        vehicleNode.addControl(new bulletControl());
+        vehicleNode.addControl(new FireControl());
         initPhysics();
     }
      private void initPhysics() {
@@ -89,22 +89,31 @@ public class PlayerVehicle
         return null;
     }
 
-   class bulletControl extends AbstractControl{
-
+   class FireControl extends AbstractControl{
+       float time = 0;
+       
         @Override
         protected void controlUpdate(float tpf) {
             
             if(shoot)
             {
-                shoot = !shoot;
-                vehicleNode.attachChild(bulletGeom);
-                bulletBody = new RigidBodyControl(1.0f);
-                bulletGeom.addControl(bulletBody);
-         physics.getPhysicsSpace().add(bulletBody);
+             shoot = !shoot;
+             vehicleNode.attachChild(bulletGeom);
+             bulletBody = new RigidBodyControl(1.0f);
+             bulletGeom.addControl(bulletBody);
+             physics.getPhysicsSpace().add(bulletBody);
              Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
              bulletBody.setLinearVelocity(forward.mult(25f));
-             vehicleNode.detachChild(bulletGeom);
-             
+           
+            }
+            else if(!shoot)
+            {
+                time += tpf;
+                if(time > 0.06f)
+                {
+                    vehicleNode.detachChild(bulletGeom);
+                    time = 0;
+                }
             }
 
         }

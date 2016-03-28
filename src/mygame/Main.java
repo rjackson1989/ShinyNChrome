@@ -159,6 +159,7 @@ inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
 
     public void onAnalog(String name, float value, float tpf) {
          
+       
             if(name.equals("LS Right"))
             {
                 vehicle.vehicleNode.rotate(0,value, 0);
