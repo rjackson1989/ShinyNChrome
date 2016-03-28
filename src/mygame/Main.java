@@ -2,6 +2,8 @@ package mygame;
 
 import com.jme3.ai.agents.Agent;
 import com.jme3.app.SimpleApplication;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.JoyInput;
 import com.jme3.input.Joystick;
@@ -15,24 +17,28 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
+import com.jme3.texture.Texture;
 
 
 /**
  * 
  * @author Raymond
  */
-public class Main extends SimpleApplication implements AnalogListener{
+public class Main extends SimpleApplication implements AnalogListener, ActionListener{
 
     final int MENU = 0;
     final int GAME_ON = 1;
     final int PAUSE = 2;
     final int GAME_OVER = 3;
-    Geometry geom;
+    Geometry geom, ground;
     ChaseCamera ccam;
     PlayerVehicle vehicle;
+    BulletAppState physics;
+    RigidBodyControl boxBody, groundBody;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -45,27 +51,32 @@ public class Main extends SimpleApplication implements AnalogListener{
 
     @Override
     public void simpleInitApp() {
-        vehicle = new PlayerVehicle(this, 0);
+        
         Box b = new Box(1, 1, 1);
         geom = new Geometry("Box", b);
         
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
         geom.setMaterial(mat);
-        geom.setLocalTranslation(0, 0, 0);
+        geom.setLocalTranslation(0, 0, 8);
+        geom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         initControls();
         initLighting();
         flyCam.setEnabled(false);
         Box c = new Box(100, 0, 100);
-        Geometry cube = new Geometry("Box2", c);
+        ground = new Geometry("Box2", c);
         Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat2.setColor("Color", ColorRGBA.Brown);
-        cube.setMaterial(mat2);
-        cube.setLocalTranslation(0, -1, 0);
-        ccam = new ChaseCamera(cam, vehicle.vehicleNode, inputManager);
+        Texture text = assetManager.loadTexture("Textures/asphalt.jpg");
+        mat2.setTexture("ColorMap", text);
+        ground.setMaterial(mat2);
+        ground.setLocalTranslation(0, -1, 0);
         rootNode.attachChild(geom);
         
-        rootNode.attachChild(cube);
+        rootNode.attachChild(ground);
+        initPhysics();
+        vehicle = new PlayerVehicle(this, 0);
+        ccam = new ChaseCamera(cam, vehicle.vehicleNode, inputManager);
     }
     
     private void initLighting() {
@@ -75,7 +86,20 @@ public class Main extends SimpleApplication implements AnalogListener{
     dl.setDirection(new Vector3f(-0.1f, -1f, -1).normalizeLocal());
     rootNode.addLight(dl);  
     }
-    
+    private void initMaterials()
+    {}
+    private void initPhysics()
+    {
+     physics = new BulletAppState();
+     stateManager.attach(physics);
+     boxBody = new RigidBodyControl(1.0f);
+     groundBody = new RigidBodyControl(0);
+     geom.addControl(boxBody);
+     ground.addControl(groundBody);
+     physics.getPhysicsSpace().add(boxBody);
+     physics.getPhysicsSpace().add(groundBody);
+     
+    }
     private void initControls()
     {
         
@@ -100,12 +124,12 @@ inputManager.addMapping("RS Right", new JoyAxisTrigger(i, 3, true));
 inputManager.addListener(this, "RS Left", "RS Right", "RS Down", "RS Up");
 inputManager.addMapping("Trigger L", new JoyAxisTrigger(i, 4, false));
 inputManager.addMapping("Trigger R", new JoyAxisTrigger(i, 4, true));
-inputManager.addListener(this, "Trigger L", "Trigger R");
+inputManager.addListener(this, "Trigger R", "Trigger L");
 joysticks[i].assignButton("Button A", 0);
 joysticks[i].assignButton("Button B", 1);
 joysticks[i].assignButton("Button X", 2);
 joysticks[i].assignButton("Button Y", 3);
-inputManager.addListener(this, "Button A", "Button B", "Button X", "Button Y");
+inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
 //joysticks[i].assignButton("Button LB", 4);
 //joysticks[i].assignButton("Button RB", 5);
 //joysticks[i].assignButton("Button Back", 6);
@@ -137,11 +161,11 @@ inputManager.addListener(this, "Button A", "Button B", "Button X", "Button Y");
          
             if(name.equals("LS Right"))
             {
-                vehicle.vehicleNode.rotate(0,tpf, 0);
+                vehicle.vehicleNode.rotate(0,value, 0);
             }
             if(name.equals("LS Left"))
             {
-                vehicle.vehicleNode.rotate(0,-tpf, 0);
+                vehicle.vehicleNode.rotate(0,-value, 0);
             }
             if(name.equals("Trigger R"))
             {
@@ -156,5 +180,12 @@ inputManager.addListener(this, "Button A", "Button B", "Button X", "Button Y");
                 vehicle.vehicleNode.move(forward.mult(-tpf));
             }
             
+    }
+
+    public void onAction(String name, boolean isPressed, float tpf) {
+        if(name.equals("Button B"))
+        {
+            vehicle.shoot = true;
+        }
     }
 }
