@@ -183,7 +183,7 @@ inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
-        if(name.equals("Button B"))
+        if(name.equals("Button B") && isPressed)
         {
             vehicle.shoot = true;
         }

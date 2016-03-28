@@ -96,20 +96,17 @@ public class PlayerVehicle
             
             if(shoot)
             {
-                System.out.println("shooting");
+                shoot = !shoot;
                 vehicleNode.attachChild(bulletGeom);
                 bulletBody = new RigidBodyControl(1.0f);
                 bulletGeom.addControl(bulletBody);
          physics.getPhysicsSpace().add(bulletBody);
              Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
              bulletBody.setLinearVelocity(forward.mult(25f));
-             shoot = !shoot;
+             vehicleNode.detachChild(bulletGeom);
+             
             }
-            else if(!shoot)
-            {
-                
-                if(vehicleNode.hasChild(bulletGeom)){vehicleNode.detachChild(bulletGeom);}
-            }
+
         }
 
         @Override
