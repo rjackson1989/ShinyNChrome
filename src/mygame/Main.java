@@ -1,6 +1,6 @@
 package mygame;
 
-import com.jme3.ai.agents.Agent;
+//import com.jme3.ai.agents.Agent;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -125,10 +125,11 @@ inputManager.addListener(this, "RS Left", "RS Right", "RS Down", "RS Up");
 inputManager.addMapping("Trigger L", new JoyAxisTrigger(i, 4, false));
 inputManager.addMapping("Trigger R", new JoyAxisTrigger(i, 4, true));
 inputManager.addListener(this, "Trigger R", "Trigger L");
-joysticks[i].assignButton("Button A", 0);
-joysticks[i].assignButton("Button B", 1);
-joysticks[i].assignButton("Button X", 2);
-joysticks[i].assignButton("Button Y", 3);
+// proper usuage for deprecated assignButton
+joysticks[i].getButton("0").assignButton("Button A");
+joysticks[i].getButton("1").assignButton("Button B");
+joysticks[i].getButton("2").assignButton("Button X");
+joysticks[i].getButton("3").assignButton("Button Y");
 inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
 //joysticks[i].assignButton("Button LB", 4);
 //joysticks[i].assignButton("Button RB", 5);
@@ -174,17 +175,17 @@ inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
                 
                 vehicle.vehicleNode.move(forward.mult(tpf * 5));
             }
-            if(name.equals("Button A"))
+            if(name.equals("Trigger L"))
             {
                 Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
                 
-                vehicle.vehicleNode.move(forward.mult(-tpf));
+                vehicle.vehicleNode.move(forward.mult(-tpf * 5));
             }
             
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
-        if(name.equals("Button B") && isPressed)
+        if(name.equals("Button A") && isPressed)
         {
             vehicle.shoot = true;
         }
