@@ -26,7 +26,7 @@ import com.jme3.texture.Texture;
 
 /**
  * 
- * @author Raymond
+ * @authors Raymond, Alexander
  */
 public class Main extends SimpleApplication implements AnalogListener, ActionListener{
 
@@ -34,7 +34,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     final int GAME_ON = 1;
     final int PAUSE = 2;
     final int GAME_OVER = 3;
-    Geometry geom, ground;
+    Geometry targetGeom, ground;
     ChaseCamera ccam;
     PlayerVehicle vehicle;
     BulletAppState physics;
@@ -52,29 +52,17 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     @Override
     public void simpleInitApp() {
         
-        Box b = new Box(1, 1, 1);
-        geom = new Geometry("Box", b);
+        // get rid of the pesky statistics
+        setDisplayFps(false);
+        setDisplayStatView(false);
+        flyCam.setEnabled(false);
         
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        geom.setMaterial(mat);
-        geom.setLocalTranslation(0, 0, 8);
-        geom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        // calls to init functions to help create our scene
+        initMaterials();
         initControls();
         initLighting();
-        flyCam.setEnabled(false);
-        Box c = new Box(100, 0, 100);
-        ground = new Geometry("Box2", c);
-        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat2.setColor("Color", ColorRGBA.Brown);
-        Texture text = assetManager.loadTexture("Textures/asphalt.jpg");
-        mat2.setTexture("ColorMap", text);
-        ground.setMaterial(mat2);
-        ground.setLocalTranslation(0, -1, 0);
-        rootNode.attachChild(geom);
-        
-        rootNode.attachChild(ground);
         initPhysics();
+        
         vehicle = new PlayerVehicle(this, 0);
         ccam = new ChaseCamera(cam, vehicle.vehicleNode, inputManager);
     }
@@ -87,14 +75,34 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     rootNode.addLight(dl);  
     }
     private void initMaterials()
-    {}
+    {
+        Box targetBox = new Box(1, 1, 1);
+        targetGeom = new Geometry("Box", targetBox);
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", ColorRGBA.Blue);
+        targetGeom.setMaterial(mat);
+        targetGeom.setLocalTranslation(0, 0, 8);
+        targetGeom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        rootNode.attachChild(targetGeom);
+        
+        // the ground that the vehicle drives on
+        Box groundBox = new Box(100, 0, 100);
+        ground = new Geometry("Box2", groundBox);
+        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        mat2.setColor("Color", ColorRGBA.Brown);
+        Texture text = assetManager.loadTexture("Textures/asphalt.jpg");
+        mat2.setTexture("ColorMap", text);
+        ground.setMaterial(mat2);
+        ground.setLocalTranslation(0, -1, 0);
+        rootNode.attachChild(ground);
+    }
     private void initPhysics()
     {
      physics = new BulletAppState();
      stateManager.attach(physics);
      boxBody = new RigidBodyControl(1.0f);
      groundBody = new RigidBodyControl(0);
-     geom.addControl(boxBody);
+     targetGeom.addControl(boxBody);
      ground.addControl(groundBody);
      physics.getPhysicsSpace().add(boxBody);
      physics.getPhysicsSpace().add(groundBody);
@@ -160,34 +168,34 @@ inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
 
     public void onAnalog(String name, float value, float tpf) {
          
-       
+            // spins the vehicle to the right, pivoting around vehicle origin
             if(name.equals("LS Right"))
             {
                 vehicle.vehicleNode.rotate(0,value, 0);
             }
+            // spins the vehicle to the left, pivoting around vehicle origin
             if(name.equals("LS Left"))
             {
                 vehicle.vehicleNode.rotate(0,-value, 0);
             }
+            // moves the vehicle forward (gives it gas)
             if(name.equals("Trigger R"))
             {
                 Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                
                 vehicle.vehicleNode.move(forward.mult(tpf * 5));
             }
+            // reverses the vehicle (moves it backwards)
             if(name.equals("Trigger L"))
             {
                 Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                
                 vehicle.vehicleNode.move(forward.mult(-tpf * 5));
             }
-            
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
         if(name.equals("Button A") && isPressed)
         {
-            vehicle.shoot = true;
+           vehicle.shoot = true;
         }
     }
 }
