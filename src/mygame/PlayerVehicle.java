@@ -24,8 +24,8 @@ import com.jme3.scene.shape.Sphere;
  *
  * @author Raymond
  */
-public class PlayerVehicle
-{
+public class PlayerVehicle {
+
     Node vehicleNode;
     Geometry bulletGeom;
     int currentState, ID;
@@ -36,40 +36,32 @@ public class PlayerVehicle
     BulletAppState physics;
     RigidBodyControl rigidBody, bulletBody;
     boolean shoot;
-    
-    
-    public PlayerVehicle(Main m, int ID)
-    {
+    Bullet bullet;
+
+    public PlayerVehicle(Main m, int ID) {
         this.main = m;
         currentState = SELECTION;
         vehicleNode = new Node();
         shoot = false;
         this.ID = ID;
-        vehicleNode = (Node)m.getAssetManager().loadModel("Models/CARS222.j3o");
+        vehicleNode = (Node) m.getAssetManager().loadModel("Models/CARS222.j3o");
         vehicleNode.setShadowMode(RenderQueue.ShadowMode.Cast);
         vehicleNode.setLocalTranslation(0, 3f, 0);
-        Sphere s = new Sphere(32, 32, 0.2f);
-        bulletGeom = new Geometry("bullet", s);
-        Material mat = new Material(m.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Gray);
-        bulletGeom.setMaterial(mat);
-        bulletGeom.setLocalTranslation(0, 1f, 5f);
-       // vehicleNode.attachChild(bulletGeom);
         m.getRootNode().attachChild(vehicleNode);
         vehicleNode.addControl(new FireControl());
         initPhysics();
     }
-     private void initPhysics() {
-         physics = main.physics;
-         rigidBody = new RigidBodyControl(1.0f);
-         
-         vehicleNode.addControl(rigidBody);
-         
-         //bulletBody.setKinematic(true);
-         rigidBody.setKinematic(true);
-         physics.getPhysicsSpace().add(rigidBody);
-     }
-  
+
+    private void initPhysics() {
+        physics = main.physics;
+        rigidBody = new RigidBodyControl(1.0f);
+
+        vehicleNode.addControl(rigidBody);
+
+        //bulletBody.setKinematic(true);
+        rigidBody.setKinematic(true);
+        physics.getPhysicsSpace().add(rigidBody);
+    }
 
     private Geometry findGeom(Spatial spatial, String name) {
         if (spatial instanceof Node) {
@@ -89,38 +81,32 @@ public class PlayerVehicle
         return null;
     }
 
-   class FireControl extends AbstractControl{
-       float time = 0;
-       
+    class FireControl extends AbstractControl {
+
+        float time = 0;
+
         @Override
         protected void controlUpdate(float tpf) {
-            
-            if(shoot)
-            {
-             shoot = !shoot;
-             vehicleNode.attachChild(bulletGeom);
-             bulletBody = new RigidBodyControl(1.0f);
-             bulletGeom.addControl(bulletBody);
-             physics.getPhysicsSpace().add(bulletBody);
-             Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
-             bulletBody.setLinearVelocity(forward.mult(25f));
-           
-            }
-            else if(!shoot)
-            {
-                time += tpf;
-                if(time > 0.06f)
-                {
-                    vehicleNode.detachChild(bulletGeom);
-                    time = 0;
-                }
-            }
 
+            if (shoot == true) {
+                makeBullets(main);
+                shoot = false;
+            }
         }
 
         @Override
         protected void controlRender(RenderManager rm, ViewPort vp) {
         }
     }
-    
+
+    protected void makeBullets(Main m) {
+        bullet = new Bullet(m);
+        bullet.bulletGeom.setLocalTranslation(0, 1f, 5f);
+        vehicleNode.attachChild(bullet.bulletGeom);
+        bulletBody = new RigidBodyControl(1.0f);
+        bullet.bulletGeom.addControl(bulletBody);
+        physics.getPhysicsSpace().add(bulletBody);
+        Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
+        bulletBody.setLinearVelocity(forward.mult(150f));
+    }
 }
