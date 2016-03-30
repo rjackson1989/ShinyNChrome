@@ -24,7 +24,7 @@ import com.jme3.scene.shape.Sphere;
  *
  * @author Raymond
  */
-public class PlayerVehicle {
+public class PlayerVehicle implements ActionListener, AnalogListener{
 
     Node vehicleNode;
     Geometry bulletGeom;
@@ -41,12 +41,12 @@ public class PlayerVehicle {
     public PlayerVehicle(Main m, int ID) {
         this.main = m;
         currentState = SELECTION;
-        vehicleNode = new Node();
+        this.vehicleNode = new Node();
         shoot = false;
         this.ID = ID;
         vehicleNode = (Node) m.getAssetManager().loadModel("Models/CARS222.j3o");
         vehicleNode.setShadowMode(RenderQueue.ShadowMode.Cast);
-        vehicleNode.setLocalTranslation(0, 3f, 0);
+        vehicleNode.setLocalTranslation(0, 3f, ID*14f);
         m.getRootNode().attachChild(vehicleNode);
         vehicleNode.addControl(new FireControl());
         initPhysics();
@@ -79,6 +79,43 @@ public class PlayerVehicle {
             }
         }
         return null;
+    }
+
+    public void onAction(String name, boolean isPressed, float tpf) {
+        if(name.equals("Button A"+ID) && isPressed)
+        {
+           shoot = true;
+        }
+    }
+
+    public void onAnalog(String name, float value, float tpf) {
+        // spins the vehicle to the right, pivoting around vehicle origin
+            if(name.equals("LS Right"+ID))
+            {
+                vehicleNode.rotate(0,value, 0);
+            }
+            // spins the vehicle to the left, pivoting around vehicle origin
+            if(name.equals("LS Left"+ID))
+            {
+                vehicleNode.rotate(0,-value, 0);
+            }
+            // moves the vehicle forward (gives it gas)
+            if(name.equals("Trigger R"+ID))
+            {
+                Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
+                vehicleNode.move(forward.mult(tpf * 5));
+            }
+            // reverses the vehicle (moves it backwards)
+            if(name.equals("Trigger L"+ID))
+            {
+                Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
+                vehicleNode.move(forward.mult(-tpf * 5));
+            }
+            if(name.equals("RS Left"+ID))
+            {
+                //rigidBody.setAngularVelocity(new Vector3f(0, value, 0));
+                vehicleNode.rotate(0, value, 0);
+            }
     }
 
     class FireControl extends AbstractControl {
