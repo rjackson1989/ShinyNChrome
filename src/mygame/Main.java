@@ -19,9 +19,11 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 
 
 /**
@@ -39,6 +41,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     PlayerVehicle vehicle;
     BulletAppState physics;
     RigidBodyControl boxBody, groundBody;
+    Node terrainNode = new Node();
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -76,6 +79,13 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     }
     private void initMaterials()
     {
+        //create terrain object and attach it to root to populate scene graph
+        Terrain terrain = new Terrain(this);
+        rootNode.attachChild(terrainNode);
+        
+        // create a sky
+        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+        // the target 
         Box targetBox = new Box(1, 1, 1);
         targetGeom = new Geometry("Box", targetBox);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -84,17 +94,17 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         targetGeom.setLocalTranslation(0, 0, 8);
         targetGeom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         rootNode.attachChild(targetGeom);
-        
-        // the ground that the vehicle drives on
-        Box groundBox = new Box(100, 0, 100);
-        ground = new Geometry("Box2", groundBox);
-        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat2.setColor("Color", ColorRGBA.Brown);
-        Texture text = assetManager.loadTexture("Textures/asphalt.jpg");
-        mat2.setTexture("ColorMap", text);
-        ground.setMaterial(mat2);
-        ground.setLocalTranslation(0, -1, 0);
-        rootNode.attachChild(ground);
+//        
+//        // the ground that the vehicle drives on
+//        Box groundBox = new Box(100, 0, 100);
+//        ground = new Geometry("Box2", groundBox);
+//        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//        mat2.setColor("Color", ColorRGBA.Brown);
+//        Texture text = assetManager.loadTexture("Textures/asphalt.jpg");
+//        mat2.setTexture("ColorMap", text);
+//        ground.setMaterial(mat2);
+//        ground.setLocalTranslation(0, -1, 0);
+//        rootNode.attachChild(ground);
     }
     private void initPhysics()
     {
@@ -103,9 +113,9 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
      boxBody = new RigidBodyControl(1.0f);
      groundBody = new RigidBodyControl(0);
      targetGeom.addControl(boxBody);
-     ground.addControl(groundBody);
+     //ground.addControl(groundBody);
      physics.getPhysicsSpace().add(boxBody);
-     physics.getPhysicsSpace().add(groundBody);
+     //physics.getPhysicsSpace().add(groundBody);
      
     }
     private void initControls()
@@ -182,13 +192,13 @@ inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
             if(name.equals("Trigger R"))
             {
                 Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicle.vehicleNode.move(forward.mult(tpf * 5));
+                vehicle.vehicleNode.move(forward.mult(tpf * 20));
             }
             // reverses the vehicle (moves it backwards)
             if(name.equals("Trigger L"))
             {
                 Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicle.vehicleNode.move(forward.mult(-tpf * 5));
+                vehicle.vehicleNode.move(forward.mult(-tpf * 20));
             }
     }
 
