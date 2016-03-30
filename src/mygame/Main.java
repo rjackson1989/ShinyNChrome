@@ -23,7 +23,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
-import com.jme3.util.SkyFactory;
 
 
 /**
@@ -42,6 +41,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     BulletAppState physics;
     RigidBodyControl boxBody, groundBody;
     Node terrainNode = new Node();
+    Terrain terrain;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -58,7 +58,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         // get rid of the pesky statistics
         setDisplayFps(false);
         setDisplayStatView(false);
-        flyCam.setEnabled(false);
+        flyCam.setEnabled(true);
         
         // calls to init functions to help create our scene
         initMaterials();
@@ -79,13 +79,9 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     }
     private void initMaterials()
     {
-        //create terrain object and attach it to root to populate scene graph
-        Terrain terrain = new Terrain(this);
+        terrain = new Terrain(this);
         rootNode.attachChild(terrainNode);
         
-        // create a sky
-        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-        // the target 
         Box targetBox = new Box(1, 1, 1);
         targetGeom = new Geometry("Box", targetBox);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -94,7 +90,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         targetGeom.setLocalTranslation(0, 0, 8);
         targetGeom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         rootNode.attachChild(targetGeom);
-//        
+        
 //        // the ground that the vehicle drives on
 //        Box groundBox = new Box(100, 0, 100);
 //        ground = new Geometry("Box2", groundBox);
@@ -113,9 +109,11 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
      boxBody = new RigidBodyControl(1.0f);
      groundBody = new RigidBodyControl(0);
      targetGeom.addControl(boxBody);
-     //ground.addControl(groundBody);
+
+     // add terrain landscape to physics space
      physics.getPhysicsSpace().add(boxBody);
-     //physics.getPhysicsSpace().add(groundBody);
+     physics.getPhysicsSpace().add(terrain.landscape);
+//     physics.getPhysicsSpace().add(groundBody);
      
     }
     private void initControls()
@@ -144,11 +142,11 @@ inputManager.addMapping("Trigger L", new JoyAxisTrigger(i, 4, false));
 inputManager.addMapping("Trigger R", new JoyAxisTrigger(i, 4, true));
 inputManager.addListener(this, "Trigger R", "Trigger L");
 // proper usuage for deprecated assignButton
-joysticks[i].getButton("0").assignButton("Button A");
-joysticks[i].getButton("1").assignButton("Button B");
-joysticks[i].getButton("2").assignButton("Button X");
-joysticks[i].getButton("3").assignButton("Button Y");
-inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
+//joysticks[i].getButton("0").assignButton("Button A");
+//joysticks[i].getButton("1").assignButton("Button B");
+//joysticks[i].getButton("2").assignButton("Button X");
+//joysticks[i].getButton("3").assignButton("Button Y");
+//inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
 //joysticks[i].assignButton("Button LB", 4);
 //joysticks[i].assignButton("Button RB", 5);
 //joysticks[i].assignButton("Button Back", 6);
@@ -192,13 +190,13 @@ inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
             if(name.equals("Trigger R"))
             {
                 Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicle.vehicleNode.move(forward.mult(tpf * 20));
+                vehicle.vehicleNode.move(forward.mult(tpf * 5));
             }
             // reverses the vehicle (moves it backwards)
             if(name.equals("Trigger L"))
             {
                 Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicle.vehicleNode.move(forward.mult(-tpf * 20));
+                vehicle.vehicleNode.move(forward.mult(-tpf * 5));
             }
     }
 

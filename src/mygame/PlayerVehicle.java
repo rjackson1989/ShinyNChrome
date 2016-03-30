@@ -59,7 +59,7 @@ public class PlayerVehicle {
         vehicleNode.addControl(rigidBody);
 
         //bulletBody.setKinematic(true);
-        rigidBody.setKinematic(true);
+        rigidBody.setKinematic(false);
         physics.getPhysicsSpace().add(rigidBody);
     }
 
