@@ -16,7 +16,9 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
@@ -35,10 +37,11 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     final int PAUSE = 2;
     final int GAME_OVER = 3;
     Geometry targetGeom, ground;
-    ChaseCamera ccam;
+    ChaseCamera ccam1, ccam2;
     PlayerVehicle[] vehicles;
     BulletAppState physics;
     RigidBodyControl boxBody, groundBody;
+    Camera cam2;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -69,10 +72,9 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         }
         initControls();
         initLighting();
-        
+        initCamera();
         
         //cam.setLocation(new Vector3f(0, 10f, 0));
-        ccam = new ChaseCamera(cam, vehicles[0].vehicleNode, inputManager);
     }
     
     private void initLighting() {
@@ -118,7 +120,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     }
     private void initControls()
     {
-        //inputManager.clearMappings();
+        
         Joystick[] joysticks = inputManager.getJoysticks();
         if(joysticks == null)
         {
@@ -162,6 +164,18 @@ inputManager.addListener(vehicles[i], "Button A"+i, "Button B"+i,"Button X"+i, "
 //inputManager.addListener(this, "DPAD Left", "DPAD Right", "DPAD Down", "DPAD Up");
         }
 
+    }
+    private void initCamera()
+    {
+        cam2 = cam.clone();
+        cam.setViewPort(0f, 0.5f, 0f, 1f);
+        cam2.setViewPort(0.5f, 1f, 0f, 1f);
+        ViewPort view2 = renderManager.createMainView("Right Half", cam2);
+        view2.setClearFlags(true, true, true);
+        view2.attachScene(rootNode);
+        ccam1 = new ChaseCamera(cam, vehicles[0].vehicleNode, inputManager);
+        ccam2 = new ChaseCamera(cam2, vehicles[1].vehicleNode, inputManager);
+        
     }
     @Override
     public void simpleUpdate(float tpf) {
