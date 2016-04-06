@@ -36,7 +36,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     final int GAME_ON = 1;
     final int PAUSE = 2;
     final int GAME_OVER = 3;
-    Geometry targetGeom, ground;
+    Geometry ground;
     ChaseCamera ccam1, ccam2;
     PlayerVehicle[] vehicles;
     BulletAppState physics;
@@ -47,6 +47,8 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         Main app = new Main();
         AppSettings settings = new AppSettings(true);
         settings.setUseJoysticks(true);
+        settings.setFullscreen(true);
+        settings.setResolution(1366, 768);
         app.setSettings(settings);
         app.setShowSettings(false);
         app.start();
@@ -65,7 +67,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         initMaterials();
         initPhysics();
         
-        vehicles = new PlayerVehicle[2];
+        vehicles = new PlayerVehicle[3];
         for(int i = 0; i < 2; i++)
         {
             vehicles[i] = new PlayerVehicle(this, i);
@@ -86,14 +88,8 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     }
     private void initMaterials()
     {
-        Box targetBox = new Box(1, 1, 1);
-        targetGeom = new Geometry("Box", targetBox);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
-//        targetGeom.setMaterial(mat);
-//        targetGeom.setLocalTranslation(0, 0, 8);
-//        targetGeom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-     //   rootNode.attachChild(targetGeom);
         
         // the ground that the vehicle drives on
         Box groundBox = new Box(100, 0, 100);
