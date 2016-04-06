@@ -37,7 +37,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     final int GAME_OVER = 3;
     Geometry targetGeom, ground;
     ChaseCamera ccam;
-    PlayerVehicle vehicle;
+    PlayerVehicle[] vehicles;
     BulletAppState physics;
     RigidBodyControl boxBody, groundBody;
     Node terrainNode = new Node();
@@ -58,16 +58,28 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         // get rid of the pesky statistics
         setDisplayFps(false);
         setDisplayStatView(false);
+<<<<<<< HEAD
         flyCam.setEnabled(true);
+=======
+//        flyCam.setEnabled(false);
+//        flyCam.setMoveSpeed(20f);
+>>>>>>> 51decee0094608c9431d7f2211d430d98e7f189a
         
         // calls to init functions to help create our scene
         initMaterials();
-        initControls();
-        initLighting();
         initPhysics();
         
-        vehicle = new PlayerVehicle(this, 0);
-        ccam = new ChaseCamera(cam, vehicle.vehicleNode, inputManager);
+        vehicles = new PlayerVehicle[2];
+        for(int i = 0; i < 2; i++)
+        {
+            vehicles[i] = new PlayerVehicle(this, i);
+        }
+        initControls();
+        initLighting();
+        
+        
+        //cam.setLocation(new Vector3f(0, 10f, 0));
+        ccam = new ChaseCamera(cam, vehicles[0].vehicleNode, inputManager);
     }
     
     private void initLighting() {
@@ -86,10 +98,10 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         targetGeom = new Geometry("Box", targetBox);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
-        targetGeom.setMaterial(mat);
-        targetGeom.setLocalTranslation(0, 0, 8);
-        targetGeom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
-        rootNode.attachChild(targetGeom);
+//        targetGeom.setMaterial(mat);
+//        targetGeom.setLocalTranslation(0, 0, 8);
+//        targetGeom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+     //   rootNode.attachChild(targetGeom);
         
 //        // the ground that the vehicle drives on
 //        Box groundBox = new Box(100, 0, 100);
@@ -106,47 +118,62 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     {
      physics = new BulletAppState();
      stateManager.attach(physics);
-     boxBody = new RigidBodyControl(1.0f);
+     //boxBody = new RigidBodyControl(1.0f);
      groundBody = new RigidBodyControl(0);
+<<<<<<< HEAD
      targetGeom.addControl(boxBody);
 
      // add terrain landscape to physics space
      physics.getPhysicsSpace().add(boxBody);
      physics.getPhysicsSpace().add(terrain.landscape);
 //     physics.getPhysicsSpace().add(groundBody);
+=======
+     //targetGeom.addControl(boxBody);
+     ground.addControl(groundBody);
+     //physics.getPhysicsSpace().add(boxBody);
+     physics.getPhysicsSpace().add(groundBody);
+>>>>>>> 51decee0094608c9431d7f2211d430d98e7f189a
      
     }
     private void initControls()
     {
-        
+        //inputManager.clearMappings();
         Joystick[] joysticks = inputManager.getJoysticks();
         if(joysticks == null)
         {
             throw new IllegalStateException("Cannot find Joystick!");
         }
-        int i = 0;
+     
 
-       // for(int i = 0; i < 2; i++)
-        //{
-inputManager.addMapping("LS Up", new JoyAxisTrigger(i, 0, true));
-inputManager.addMapping("LS Down", new JoyAxisTrigger(i, 0, false));
-inputManager.addMapping("LS Left", new JoyAxisTrigger(i, 1, false));
-inputManager.addMapping("LS Right", new JoyAxisTrigger(i, 1, true));
-inputManager.addListener(this, "LS Left", "LS Right", "LS Down", "LS Up");
-inputManager.addMapping("RS Up", new JoyAxisTrigger(i, 2, true));
-inputManager.addMapping("RS Down", new JoyAxisTrigger(i, 2, false));
-inputManager.addMapping("RS Left", new JoyAxisTrigger(i, 3, false));
-inputManager.addMapping("RS Right", new JoyAxisTrigger(i, 3, true));
-inputManager.addListener(this, "RS Left", "RS Right", "RS Down", "RS Up");
-inputManager.addMapping("Trigger L", new JoyAxisTrigger(i, 4, false));
-inputManager.addMapping("Trigger R", new JoyAxisTrigger(i, 4, true));
-inputManager.addListener(this, "Trigger R", "Trigger L");
+        for(int i = 0; i < joysticks.length; i++)
+        {
+inputManager.addMapping("LS Up"+i, new JoyAxisTrigger(i, 0, true));
+inputManager.addMapping("LS Down"+i, new JoyAxisTrigger(i, 0, false));
+inputManager.addMapping("LS Left"+i, new JoyAxisTrigger(i, 1, false));
+inputManager.addMapping("LS Right"+i, new JoyAxisTrigger(i, 1, true));
+inputManager.addListener(vehicles[i], "LS Left"+i, "LS Right"+i, "LS Down"+i, "LS Up"+i);
+inputManager.addMapping("RS Up"+i, new JoyAxisTrigger(i, 2, true));
+inputManager.addMapping("RS Down"+i, new JoyAxisTrigger(i, 2, false));
+inputManager.addMapping("RS Left"+i, new JoyAxisTrigger(i, 3, false));
+inputManager.addMapping("RS Right"+i, new JoyAxisTrigger(i, 3, true));
+inputManager.addListener(vehicles[i], "RS Left"+i, "RS Right"+i, "RS Down"+i, "RS Up"+i);
+inputManager.addMapping("Trigger L"+i, new JoyAxisTrigger(i, 4, false));
+inputManager.addMapping("Trigger R"+i, new JoyAxisTrigger(i, 4, true));
+inputManager.addListener(vehicles[i], "Trigger R"+i, "Trigger L"+i);
 // proper usuage for deprecated assignButton
+<<<<<<< HEAD
 //joysticks[i].getButton("0").assignButton("Button A");
 //joysticks[i].getButton("1").assignButton("Button B");
 //joysticks[i].getButton("2").assignButton("Button X");
 //joysticks[i].getButton("3").assignButton("Button Y");
 //inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
+=======
+joysticks[i].getButton("0").assignButton("Button A"+i);
+joysticks[i].getButton("1").assignButton("Button B"+i);
+joysticks[i].getButton("2").assignButton("Button X"+i);
+joysticks[i].getButton("3").assignButton("Button Y"+i);
+inputManager.addListener(vehicles[i], "Button A"+i, "Button B"+i,"Button X"+i, "Button Y"+i);
+>>>>>>> 51decee0094608c9431d7f2211d430d98e7f189a
 //joysticks[i].assignButton("Button LB", 4);
 //joysticks[i].assignButton("Button RB", 5);
 //joysticks[i].assignButton("Button Back", 6);
@@ -160,7 +187,7 @@ inputManager.addListener(this, "Trigger R", "Trigger L");
 //inputManager.addMapping("DPAD Down", new JoyAxisTrigger(i, 5, true));
 //inputManager.addMapping("DPAD Up", new JoyAxisTrigger(i, 5, false));
 //inputManager.addListener(this, "DPAD Left", "DPAD Right", "DPAD Down", "DPAD Up");
-       // }
+        }
 
     }
     @Override
@@ -176,34 +203,10 @@ inputManager.addListener(this, "Trigger R", "Trigger L");
 
     public void onAnalog(String name, float value, float tpf) {
          
-            // spins the vehicle to the right, pivoting around vehicle origin
-            if(name.equals("LS Right"))
-            {
-                vehicle.vehicleNode.rotate(0,value, 0);
-            }
-            // spins the vehicle to the left, pivoting around vehicle origin
-            if(name.equals("LS Left"))
-            {
-                vehicle.vehicleNode.rotate(0,-value, 0);
-            }
-            // moves the vehicle forward (gives it gas)
-            if(name.equals("Trigger R"))
-            {
-                Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicle.vehicleNode.move(forward.mult(tpf * 5));
-            }
-            // reverses the vehicle (moves it backwards)
-            if(name.equals("Trigger L"))
-            {
-                Vector3f forward = vehicle.vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicle.vehicleNode.move(forward.mult(-tpf * 5));
-            }
+            
     }
 
     public void onAction(String name, boolean isPressed, float tpf) {
-        if(name.equals("Button A") && isPressed)
-        {
-           vehicle.shoot = true;
-        }
+        
     }
 }
