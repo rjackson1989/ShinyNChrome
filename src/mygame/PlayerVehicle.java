@@ -10,6 +10,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -46,10 +47,16 @@ public class PlayerVehicle implements ActionListener, AnalogListener{
         this.ID = ID;
         vehicleNode = (Node) m.getAssetManager().loadModel("Models/CARS222.j3o");
         vehicleNode.setShadowMode(RenderQueue.ShadowMode.Cast);
-        vehicleNode.setLocalTranslation(0, 3f, ID*14f);
+        generateRandomLocation();
         m.getRootNode().attachChild(vehicleNode);
         vehicleNode.addControl(new FireControl());
         initPhysics();
+    }
+    
+    private void generateRandomLocation()
+    {
+        vehicleNode.setLocalTranslation(FastMath.nextRandomFloat()*20f, 3f
+                , FastMath.nextRandomFloat()* 20f);
     }
 
     private void initPhysics() {
@@ -103,13 +110,13 @@ public class PlayerVehicle implements ActionListener, AnalogListener{
             if(name.equals("Trigger R"+ID))
             {
                 Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicleNode.move(forward.mult(tpf * 5));
+                vehicleNode.move(forward.mult(value * 25));
             }
             // reverses the vehicle (moves it backwards)
             if(name.equals("Trigger L"+ID))
             {
                 Vector3f forward = vehicleNode.getLocalRotation().getRotationColumn(2);
-                vehicleNode.move(forward.mult(-tpf * 5));
+                vehicleNode.move(forward.mult(-value * 25));
             }
             if(name.equals("RS Left"+ID))
             {
@@ -117,17 +124,23 @@ public class PlayerVehicle implements ActionListener, AnalogListener{
                 vehicleNode.rotate(0, value, 0);
             }
     }
+    
+    public void detachBullet()
+    {
+        vehicleNode.detachChild(bullet.bulletGeom);
+    }
 
     class FireControl extends AbstractControl {
 
-        float time = 0;
+        float time = 0.2f;
 
         @Override
         protected void controlUpdate(float tpf) {
-
+            
             if (shoot == true) {
                 makeBullets(main);
                 shoot = false;
+                time = 0.2f;
             }
         }
 
@@ -137,7 +150,7 @@ public class PlayerVehicle implements ActionListener, AnalogListener{
     }
 
     protected void makeBullets(Main m) {
-        bullet = new Bullet(m);
+        bullet = new Bullet(m, PlayerVehicle.this);
         bullet.bulletGeom.setLocalTranslation(0, 1f, 5f);
         vehicleNode.attachChild(bullet.bulletGeom);
         bulletBody = new RigidBodyControl(1.0f);
