@@ -58,12 +58,12 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         // get rid of the pesky statistics
         setDisplayFps(false);
         setDisplayStatView(false);
-<<<<<<< HEAD
+
         flyCam.setEnabled(true);
-=======
+
 //        flyCam.setEnabled(false);
 //        flyCam.setMoveSpeed(20f);
->>>>>>> 51decee0094608c9431d7f2211d430d98e7f189a
+
         
         // calls to init functions to help create our scene
         initMaterials();
@@ -103,7 +103,7 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
 //        targetGeom.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
      //   rootNode.attachChild(targetGeom);
         
-//        // the ground that the vehicle drives on
+////        // the ground that the vehicle drives on
 //        Box groundBox = new Box(100, 0, 100);
 //        ground = new Geometry("Box2", groundBox);
 //        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -118,21 +118,18 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     {
      physics = new BulletAppState();
      stateManager.attach(physics);
-     //boxBody = new RigidBodyControl(1.0f);
-     groundBody = new RigidBodyControl(0);
-<<<<<<< HEAD
-     targetGeom.addControl(boxBody);
+    // boxBody = new RigidBodyControl(1.0f);
+    // groundBody = new RigidBodyControl(0);
+    // targetGeom.addControl(boxBody);
 
      // add terrain landscape to physics space
-     physics.getPhysicsSpace().add(boxBody);
+    // physics.getPhysicsSpace().add(boxBody);
      physics.getPhysicsSpace().add(terrain.landscape);
 //     physics.getPhysicsSpace().add(groundBody);
-=======
      //targetGeom.addControl(boxBody);
-     ground.addControl(groundBody);
+    // ground.addControl(groundBody);
      //physics.getPhysicsSpace().add(boxBody);
-     physics.getPhysicsSpace().add(groundBody);
->>>>>>> 51decee0094608c9431d7f2211d430d98e7f189a
+    // physics.getPhysicsSpace().add(groundBody);
      
     }
     private void initControls()
@@ -161,19 +158,18 @@ inputManager.addMapping("Trigger L"+i, new JoyAxisTrigger(i, 4, false));
 inputManager.addMapping("Trigger R"+i, new JoyAxisTrigger(i, 4, true));
 inputManager.addListener(vehicles[i], "Trigger R"+i, "Trigger L"+i);
 // proper usuage for deprecated assignButton
-<<<<<<< HEAD
+
 //joysticks[i].getButton("0").assignButton("Button A");
 //joysticks[i].getButton("1").assignButton("Button B");
 //joysticks[i].getButton("2").assignButton("Button X");
 //joysticks[i].getButton("3").assignButton("Button Y");
 //inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
-=======
-joysticks[i].getButton("0").assignButton("Button A"+i);
-joysticks[i].getButton("1").assignButton("Button B"+i);
-joysticks[i].getButton("2").assignButton("Button X"+i);
-joysticks[i].getButton("3").assignButton("Button Y"+i);
-inputManager.addListener(vehicles[i], "Button A"+i, "Button B"+i,"Button X"+i, "Button Y"+i);
->>>>>>> 51decee0094608c9431d7f2211d430d98e7f189a
+
+//joysticks[i].getButton("0").assignButton("Button A"+i);
+//joysticks[i].getButton("1").assignButton("Button B"+i);
+//joysticks[i].getButton("2").assignButton("Button X"+i);
+//joysticks[i].getButton("3").assignButton("Button Y"+i);
+//inputManager.addListener(vehicles[i], "Button A"+i, "Button B"+i,"Button X"+i, "Button Y"+i);
 //joysticks[i].assignButton("Button LB", 4);
 //joysticks[i].assignButton("Button RB", 5);
 //joysticks[i].assignButton("Button Back", 6);
