@@ -66,7 +66,8 @@ public class PlayerVehicle implements ActionListener, AnalogListener{
         vehicleNode.addControl(rigidBody);
 
         //bulletBody.setKinematic(true);
-        rigidBody.setKinematic(true);
+        rigidBody.setMass(1f);
+        rigidBody.setKinematic(false);
         physics.getPhysicsSpace().add(rigidBody);
     }
 

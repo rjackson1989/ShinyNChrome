@@ -21,6 +21,7 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
@@ -42,6 +43,8 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     BulletAppState physics;
     RigidBodyControl boxBody, groundBody;
     Camera cam2;
+    Node terrainNode = new Node();
+    Terrain terrain;
     
     public static void main(String[] args) {
         Main app = new Main();
@@ -60,8 +63,12 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
         // get rid of the pesky statistics
         setDisplayFps(false);
         setDisplayStatView(false);
+
+        flyCam.setEnabled(true);
+
 //        flyCam.setEnabled(false);
 //        flyCam.setMoveSpeed(20f);
+
         
         // calls to init functions to help create our scene
         initMaterials();
@@ -88,30 +95,40 @@ public class Main extends SimpleApplication implements AnalogListener, ActionLis
     }
     private void initMaterials()
     {
+        terrain = new Terrain(this);
+        rootNode.attachChild(terrainNode);
+        
+        Box targetBox = new Box(1, 1, 1);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Blue);
         
-        // the ground that the vehicle drives on
-        Box groundBox = new Box(100, 0, 100);
-        ground = new Geometry("Box2", groundBox);
-        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat2.setColor("Color", ColorRGBA.Brown);
-        Texture text = assetManager.loadTexture("Textures/asphalt.jpg");
-        mat2.setTexture("ColorMap", text);
-        ground.setMaterial(mat2);
-        ground.setLocalTranslation(0, -1, 0);
-        rootNode.attachChild(ground);
+////        // the ground that the vehicle drives on
+//        Box groundBox = new Box(100, 0, 100);
+//        ground = new Geometry("Box2", groundBox);
+//        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+//        mat2.setColor("Color", ColorRGBA.Brown);
+//        Texture text = assetManager.loadTexture("Textures/asphalt.jpg");
+//        mat2.setTexture("ColorMap", text);
+//        ground.setMaterial(mat2);
+//        ground.setLocalTranslation(0, -1, 0);
+//        rootNode.attachChild(ground);
     }
     private void initPhysics()
     {
      physics = new BulletAppState();
      stateManager.attach(physics);
-     //boxBody = new RigidBodyControl(1.0f);
-     groundBody = new RigidBodyControl(0);
+    // boxBody = new RigidBodyControl(1.0f);
+    // groundBody = new RigidBodyControl(0);
+    // targetGeom.addControl(boxBody);
+
+     // add terrain landscape to physics space
+    // physics.getPhysicsSpace().add(boxBody);
+     physics.getPhysicsSpace().add(terrain.landscape);
+//     physics.getPhysicsSpace().add(groundBody);
      //targetGeom.addControl(boxBody);
-     ground.addControl(groundBody);
+    // ground.addControl(groundBody);
      //physics.getPhysicsSpace().add(boxBody);
-     physics.getPhysicsSpace().add(groundBody);
+    // physics.getPhysicsSpace().add(groundBody);
      
     }
     private void initControls()
@@ -140,11 +157,18 @@ inputManager.addMapping("Trigger L"+i, new JoyAxisTrigger(i, 4, false));
 inputManager.addMapping("Trigger R"+i, new JoyAxisTrigger(i, 4, true));
 inputManager.addListener(vehicles[i], "Trigger R"+i, "Trigger L"+i);
 // proper usuage for deprecated assignButton
-joysticks[i].getButton("0").assignButton("Button A"+i);
-joysticks[i].getButton("1").assignButton("Button B"+i);
-joysticks[i].getButton("2").assignButton("Button X"+i);
-joysticks[i].getButton("3").assignButton("Button Y"+i);
-inputManager.addListener(vehicles[i], "Button A"+i, "Button B"+i,"Button X"+i, "Button Y"+i);
+
+//joysticks[i].getButton("0").assignButton("Button A");
+//joysticks[i].getButton("1").assignButton("Button B");
+//joysticks[i].getButton("2").assignButton("Button X");
+//joysticks[i].getButton("3").assignButton("Button Y");
+//inputManager.addListener(this, "Button A", "Button B","Button X", "Button Y");
+
+//joysticks[i].getButton("0").assignButton("Button A"+i);
+//joysticks[i].getButton("1").assignButton("Button B"+i);
+//joysticks[i].getButton("2").assignButton("Button X"+i);
+//joysticks[i].getButton("3").assignButton("Button Y"+i);
+//inputManager.addListener(vehicles[i], "Button A"+i, "Button B"+i,"Button X"+i, "Button Y"+i);
 //joysticks[i].assignButton("Button LB", 4);
 //joysticks[i].assignButton("Button RB", 5);
 //joysticks[i].assignButton("Button Back", 6);
